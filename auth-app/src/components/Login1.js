@@ -34,6 +34,32 @@ const Login = () => {
       console.log('Response received:', response.data);
       console.log('Login successful!');
       
+      // ***** THIS WAS MISSING - STORE THE JWT TOKEN *****
+      const { token, accessiblePages, user } = response.data;
+      
+      if (token) {
+        // Store JWT token in cookie
+        document.cookie = `token=${token}; path=/; SameSite=Lax; max-age=${7*24*60*60}`;
+        console.log('JWT token stored in cookie');
+      } else {
+        console.error('No token in response!');
+        alert('Login failed: No token received');
+        return;
+      }
+      
+      // Store accessible pages if provided
+      if (accessiblePages) {
+        document.cookie = `accessiblePages=${accessiblePages.join ? accessiblePages.join(',') : accessiblePages}; path=/; SameSite=Lax`;
+        console.log('Accessible pages stored:', accessiblePages);
+      }
+      
+      // Store user info if provided
+      if (user) {
+        document.cookie = `user=${JSON.stringify(user)}; path=/; SameSite=Lax`;
+        console.log('User info stored:', user);
+      }
+      // ***** END OF MISSING CODE *****
+      
       // Debug: Check if cookies are set
       console.log('Cookies after login:', document.cookie);
       
